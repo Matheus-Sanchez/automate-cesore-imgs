@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+.dotnet-home/
+publish/
+TestResults/
+*.user
+*.suo
+*.cache
+*.db
+*.onnx.tmp

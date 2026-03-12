@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FaceCensorApp.Application\FaceCensorApp.Application.csproj" />
+    <ProjectReference Include="..\FaceCensorApp.Domain\FaceCensorApp.Domain.csproj" />
+    <ProjectReference Include="..\FaceCensorApp.Infrastructure\FaceCensorApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\FaceCensorApp.AI\FaceCensorApp.AI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\assets\models\**\*">
+      <Link>assets\models\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
