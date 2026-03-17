@@ -30,8 +30,10 @@ public sealed class YuNetOnnxFaceDetector : IFaceDetector, IDisposable
         }
 
         var session = _sessions.GetOrAdd(options.ModelPath, CreateSession);
+
         using var prepared = PrepareInput(image, session);
-        using var input = NamedOnnxValue.CreateFromTensor(session.InputName, prepared.Tensor);
+        var input = NamedOnnxValue.CreateFromTensor(session.InputName, prepared.Tensor);
+
         using IDisposableReadOnlyCollection<DisposableNamedOnnxValue> results = session.Session.Run([input]);
 
         var outputMap = results.ToDictionary(
@@ -41,6 +43,7 @@ public sealed class YuNetOnnxFaceDetector : IFaceDetector, IDisposable
 
         var proposals = DecodeOutputs(outputMap, prepared, options, image.Width, image.Height);
         var finalDetections = ApplyNms(proposals, options.NmsThreshold, options.TopK);
+
         return Task.FromResult<IReadOnlyList<DetectionBox>>(finalDetections);
     }
 
@@ -55,10 +58,12 @@ public sealed class YuNetOnnxFaceDetector : IFaceDetector, IDisposable
         };
 
         var session = new InferenceSession(modelPath, sessionOptions);
+
         var input = session.InputMetadata.First();
+
         var dimensions = input.Value.Dimensions;
-        var inputWidth = dimensions.Count > 3 && dimensions[3] > 0 ? dimensions[3] : null;
-        var inputHeight = dimensions.Count > 2 && dimensions[2] > 0 ? dimensions[2] : null;
+        int? inputWidth = dimensions.Length > 3 && dimensions[3] > 0 ? dimensions[3] : null;
+        int? inputHeight = dimensions.Length > 2 && dimensions[2] > 0 ? dimensions[2] : null;
 
         return new DetectorSessionContext(session, input.Key, inputWidth, inputHeight);
     }
